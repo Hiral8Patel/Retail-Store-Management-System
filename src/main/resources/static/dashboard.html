@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Retail Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0px 0px 10px #ccc;
+            border-radius: 10px;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        .form-section {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 8px #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Retail Store Dashboard</h1>
+
+<div class="card-container">
+    <div class="card">
+        <h2 id="customerCount">0</h2>
+        <p>Customers</p>
+    </div>
+    <div class="card">
+        <h2 id="productCount">0</h2>
+        <p>Products</p>
+    </div>
+    <div class="card">
+        <h2 id="orderCount">0</h2>
+        <p>Orders</p>
+    </div>
+</div>
+
+<!-- ADD CUSTOMER -->
+<div class="form-section">
+    <h2>Add Customer</h2>
+    <input type="text" id="cName" placeholder="Name">
+    <input type="text" id="cEmail" placeholder="Email">
+    <input type="text" id="cPhone" placeholder="Phone">
+    <button onclick="addCustomer()">Add Customer</button>
+</div>
+
+<!-- ADD PRODUCT -->
+<div class="form-section">
+    <h2>Add Product</h2>
+    <input type="text" id="pName" placeholder="Product Name">
+    <input type="number" id="pPrice" placeholder="Price">
+    <input type="number" id="pQuantity" placeholder="Quantity">
+    <button onclick="addProduct()">Add Product</button>
+</div>
+
+<!-- PLACE ORDER -->
+<div class="form-section">
+    <h2>Place Order</h2>
+    <input type="number" id="oCustomerId" placeholder="Customer ID">
+    <input type="number" id="oProductId" placeholder="Product ID">
+    <input type="number" id="oQuantity" placeholder="Quantity">
+    <button onclick="placeOrder()">Place Order</button>
+</div>
+
+<h2>Products</h2>
+<table id="productTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h2>Orders</h2>
+<table id="orderTable">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Total Amount</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    const baseUrl = "http://localhost:8080";
+
+    function loadDashboard() {
+
+        // Customers
+        fetch(baseUrl + "/customers/all")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("customerCount").innerText = data.length;
+            });
+
+        // Products
+        fetch(baseUrl + "/products/all")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("productCount").innerText = data.length;
+
+                let table = document.querySelector("#productTable tbody");
+                table.innerHTML = "";
+
+                data.forEach(product => {
+                    table.innerHTML += `
+                        <tr>
+                            <td>${product.productId}</td>
+                            <td>${product.productName}</td>
+                            <td>${product.price}</td>
+                            <td>${product.quantity}</td>
+                        </tr>
+                    `;
+                });
+            });
+
+        // Orders
+        fetch(baseUrl + "/orders/all")
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Failed to fetch orders");
+        }
+        return res.json();
+    })
+    .then(data => {
+        document.getElementById("orderCount").innerText = data.length;
+
+        let table = document.querySelector("#orderTable tbody");
+        table.innerHTML = "";
+
+        data.forEach(order => {
+            table.innerHTML += `
+                <tr>
+                    <td>${order.orderId}</td>
+                    <td>${order.orderDate}</td>
+                    <td>${order.totalAmount}</td>
+                </tr>
+            `;
+        });
+    })
+    .catch(error => console.error("Error:", error));}
+	
+    function addCustomer() {
+        const customer = {
+            name: document.getElementById("cName").value,
+            email: document.getElementById("cEmail").value,
+            phone: document.getElementById("cPhone").value
+        };
+
+        fetch(baseUrl + "/customers/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(customer)
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("Customer Added Successfully!");
+            loadDashboard();
+        });
+    }
+
+    function addProduct() {
+        const product = {
+            productName: document.getElementById("pName").value,
+            price: parseFloat(document.getElementById("pPrice").value),
+            quantity: parseInt(document.getElementById("pQuantity").value)
+        };
+
+        fetch(baseUrl + "/products/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(product)
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("Product Added Successfully!");
+            loadDashboard();
+        });
+    }
+
+    function placeOrder() {
+        const order = {
+            customer: {
+                customerId: parseInt(document.getElementById("oCustomerId").value)
+            },
+            orderItems: [
+                {
+                    product: {
+                        productId: parseInt(document.getElementById("oProductId").value)
+                    },
+                    quantity: parseInt(document.getElementById("oQuantity").value)
+                }
+            ]
+        };
+
+        fetch(baseUrl + "/orders/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(order)
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("Order Placed Successfully!");
+            loadDashboard();
+        });
+    }
+
+    // Load data when page opens
+    loadDashboard();
+</script>
+
+</body>
+</html>
