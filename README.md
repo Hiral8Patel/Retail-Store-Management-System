@@ -730,30 +730,39 @@ Once the server is running and you have opened `http://localhost:8080/dashboard.
 
 ## 📸 Screenshots & Visual Demonstrations
 
-> [!NOTE]
-> The screenshots below showcase the interface and API interactions. Capture and place your actual screenshots into the `docs/screenshots/` directory matching the filenames below.
+<div align="center">
 
 ### 1. Interactive Dashboard Overview
-![Retail Store Dashboard](docs/screenshots/dashboard-overview.png)
-*Figure 1: Live dashboard showing KPI summary cards (Customers, Products, Orders) and data tables.*
+<p align="center">
+  <img src="docs/screenshots/dashboard-overview.png" alt="Retail Store Dashboard Overview" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+</p>
+<p align="center"><em>Figure 1: Live dashboard displaying KPI summary cards (Customers, Products, Orders), management forms, and data tables.</em></p>
 
----
+<br/>
 
 ### 2. Customer & Product Onboarding Forms
-![Add Customer and Product](docs/screenshots/add-forms.png)
-*Figure 2: Form interfaces for registering customers and adding inventory to the store catalog.*
+<p align="center">
+  <img src="docs/screenshots/add-forms.png" alt="Customer and Product Onboarding Forms" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+</p>
+<p align="center"><em>Figure 2: Form interfaces for registering customers and expanding inventory with real-time feedback.</em></p>
 
----
+<br/>
 
 ### 3. Order Placement & Real-Time Stock Deduction
-![Order Placement](docs/screenshots/order-placement.png)
-*Figure 3: Placing an order and verifying automatic inventory deduction and bill generation.*
+<p align="center">
+  <img src="docs/screenshots/order-placement.png" alt="Order Placement and Inventory Deduction" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+</p>
+<p align="center"><em>Figure 3: Multi-item order submission with automatic stock validation, instant deduction, and order ledger update.</em></p>
 
----
+<br/>
 
 ### 4. API Testing in Postman
-![Postman API Testing](docs/screenshots/postman-test.png)
-*Figure 4: Testing the `/orders/add` endpoint with nested customer and line items JSON in Postman.*
+<p align="center">
+  <img src="docs/screenshots/postman-test.png" alt="Postman REST API Testing" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+</p>
+<p align="center"><em>Figure 4: Testing the <code>POST /orders/add</code> endpoint with nested JSON payloads in Postman, verifying <code>200 OK</code> response.</em></p>
+
+</div>
 
 ---
 
