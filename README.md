@@ -123,7 +123,7 @@ Every feature listed below has been verified directly against the repository's s
   - **Orders Table**: Displays Order ID, Order Date, and Total Billed Amount.
 - **Seamless Refresh**: Forms invoke asynchronous `fetch()` requests and automatically refresh metric counters and tables upon completion.
 - **Responsible Components**:
-  - `src/main/resources/static/dashboard.html` (Served at `http://localhost:8080/dashboard.html`)
+  - `src/main/resources/static/dashboard.html` (Served at `http://localhost:8082/dashboard.html`)
   - `dashboard.html` (Root standalone copy)
 
 ---
@@ -159,7 +159,7 @@ The application follows an enterprise **3-Tier Layered Architecture**:
 graph TD
     Client["Client Browser<br/>(dashboard.html / Postman)"]
     
-    subgraph Spring_Boot_Backend ["Spring Boot Backend (Port 8080)"]
+    subgraph Spring_Boot_Backend ["Spring Boot Backend (Port 8082)"]
         subgraph Controller_Layer ["Controller Layer (REST Endpoints)"]
             CC["CustomerController<br/>/customers/*"]
             PC["ProductController<br/>/products/*"]
@@ -401,7 +401,7 @@ CREATE TABLE IF NOT EXISTS order_item (
 
 ## 🔗 REST API Specification
 
-The backend exposes a JSON REST API listening by default on port `8080`.
+The backend exposes a JSON REST API listening by default on port `8082`.
 
 | Method | Endpoint | Description | Request Body | Response Status |
 | :--- | :--- | :--- | :--- | :--- |
@@ -666,7 +666,7 @@ When the application boots successfully, you will see output similar to:
 ### Step 6: Access the Dashboard
 Open any modern web browser (Chrome, Firefox, Edge, Safari) and navigate to:
 
-👉 **[http://localhost:8080/dashboard.html](http://localhost:8080/dashboard.html)**
+👉 **[http://localhost:8082/dashboard.html](http://localhost:8082/dashboard.html)**
 
 ---
 
@@ -691,7 +691,7 @@ Open any modern web browser (Chrome, Firefox, Edge, Safari) and navigate to:
 
 ## 🖥️ Application Walkthrough & User Guide
 
-Once the server is running and you have opened `http://localhost:8080/dashboard.html`, follow this standard operating workflow:
+Once the server is running and you have opened `http://localhost:8082/dashboard.html`, follow this standard operating workflow:
 
 ```
 [ Step 1: Add Customer ] ──> [ Step 2: Add Products & Stock ] ──> [ Step 3: Place Order ] ──> [ Step 4: Review Tables & Counters ]
@@ -732,35 +732,48 @@ Once the server is running and you have opened `http://localhost:8080/dashboard.
 
 <div align="center">
 
-### 1. Interactive Dashboard Overview
+### 1. Interactive Dashboard Overview — Part 1
+
 <p align="center">
-  <img src="docs/screenshots/dashboard1.png" alt="Retail Store Dashboard Overview" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="docs/screenshots/dashboard1.jpg" alt="Retail Store Management Dashboard - Part 1" width="92%" />
 </p>
-<p align="center"><em>Figure 1: Live dashboard displaying KPI summary cards (Customers, Products, Orders), management forms, and data tables.</em></p>
+<p align="center"><em>Figure 1: Dashboard overview showing KPI summary cards and the customer management interface.</em></p>
 
 <br/>
 
-### 2. Customer & Product Onboarding Forms
+### 2. Interactive Dashboard Overview — Part 2
+
 <p align="center">
-  <img src="docs/screenshots/add-forms.png" alt="Customer and Product Onboarding Forms" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="docs/screenshots/dashboard2.jpg" alt="Retail Store Management Dashboard - Part 2" width="92%" />
 </p>
-<p align="center"><em>Figure 2: Form interfaces for registering customers and expanding inventory with real-time feedback.</em></p>
+<p align="center"><em>Figure 2: Dashboard continuation showing product inventory, order management, and data tables.</em></p>
 
 <br/>
 
-### 3. Order Placement & Real-Time Stock Deduction
+### 3. Add Customer
+
 <p align="center">
-  <img src="docs/screenshots/order-placement.png" alt="Order Placement and Inventory Deduction" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="docs/screenshots/add_customer.jpg" alt="Add Customer Form" width="92%" />
 </p>
-<p align="center"><em>Figure 3: Multi-item order submission with automatic stock validation, instant deduction, and order ledger update.</em></p>
+<p align="center"><em>Figure 3: Customer registration form for adding customer details to the retail management system.</em></p>
 
 <br/>
 
-### 4. API Testing in Postman
+### 4. Add Product
+
 <p align="center">
-  <img src="docs/screenshots/postman-test.png" alt="Postman REST API Testing" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="docs/screenshots/add_product.jpg" alt="Add Product Form" width="92%" />
 </p>
-<p align="center"><em>Figure 4: Testing the <code>POST /orders/add</code> endpoint with nested JSON payloads in Postman, verifying <code>200 OK</code> response.</em></p>
+<p align="center"><em>Figure 4: Product registration form for adding products, prices, and inventory quantities.</em></p>
+
+<br/>
+
+### 5. Order Placement & Inventory Management
+
+<p align="center">
+  <img src="docs/screenshots/place_order.jpg" alt="Place Order Form" width="92%" />
+</p>
+<p align="center"><em>Figure 5: Order placement interface for selecting a customer, product, and quantity.</em></p>
 
 </div>
 
@@ -784,28 +797,28 @@ You can test the backend REST API directly from the command line:
 
 #### 1. Test Customer Creation
 ```bash
-curl -X POST http://localhost:8080/customers/add \
+curl -X POST http://localhost:8082/customers/add \
   -H "Content-Type: application/json" \
   -d '{"name":"John Doe","email":"john@example.com","phone":"1234567890"}'
 ```
 
 #### 2. Test Product Creation
 ```bash
-curl -X POST http://localhost:8080/products/add \
+curl -X POST http://localhost:8082/products/add \
   -H "Content-Type: application/json" \
   -d '{"productName":"Mechanical Keyboard","price":89.50,"quantity":15}'
 ```
 
 #### 3. Test Order Creation
 ```bash
-curl -X POST http://localhost:8080/orders/add \
+curl -X POST http://localhost:8082/orders/add \
   -H "Content-Type: application/json" \
   -d '{"customer":{"customerId":1},"orderItems":[{"product":{"productId":1},"quantity":1}]}'
 ```
 
 #### 4. Fetch All Orders
 ```bash
-curl -X GET http://localhost:8080/orders/all
+curl -X GET http://localhost:8082/orders/all
 ```
 
 ---
@@ -814,7 +827,7 @@ curl -X GET http://localhost:8080/orders/all
 
 In the interest of full technical transparency, the current version of the project has the following verified limitations:
 
-1. **Authentication & Authorization**: Currently, endpoints are open and do not enforce role-based access control (RBAC), API keys, or JWT tokens. Anyone with network access to port 8080 can issue requests.
+1. **Authentication & Authorization**: Currently, endpoints are open and do not enforce role-based access control (RBAC), API keys, or JWT tokens. Anyone with network access to port 8082 can issue requests.
 2. **Transaction Demarcation (`@Transactional`)**: `OrderService.saveOrder()` modifies product quantities and saves orders without an explicit Spring `@Transactional` annotation. Adding `@Transactional` is recommended to ensure database rollback if an unexpected error occurs midway through multi-item order processing.
 3. **Global Exception Handling**: When stock is insufficient or IDs are not found, the service throws a raw `RuntimeException`, which Spring translates into a standard HTTP 500 error page. A dedicated `@ControllerAdvice` handler should be implemented to return clean HTTP 400 (Bad Request) or HTTP 404 (Not Found) JSON responses.
 4. **Input Validation**: Request bodies currently lack Jakarta Bean Validation annotations (`@Valid`, `@NotNull`, `@Min`, `@Email`). Submitting blank names or negative prices is currently permitted by the database schema.
