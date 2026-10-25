@@ -734,7 +734,7 @@ Once the server is running and you have opened `http://localhost:8080/dashboard.
 
 ### 1. Interactive Dashboard Overview
 <p align="center">
-  <img src="docs/screenshots/dashboard-overview.png" alt="Retail Store Dashboard Overview" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="docs/screenshots/dashboard1.png" alt="Retail Store Dashboard Overview" width="92%" style="max-width: 900px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
 </p>
 <p align="center"><em>Figure 1: Live dashboard displaying KPI summary cards (Customers, Products, Orders), management forms, and data tables.</em></p>
 
