@@ -1,262 +1,330 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Retail Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Store Management System</title>
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: Arial;
-            background-color: #f4f4f4;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 24px;
+            color: #222;
         }
-
-        h1 {
-            text-align: center;
-        }
-
-        .card-container {
+        h1 { text-align: center; color: #243b55; }
+        h2 { color: #243b55; }
+        .cards {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 30px;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin: 24px 0;
         }
-
         .card {
+            flex: 1;
+            min-width: 160px;
             background: white;
             padding: 20px;
-            width: 200px;
-            text-align: center;
-            box-shadow: 0px 0px 10px #ccc;
             border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px #0001;
         }
-
-        input {
-            padding: 8px;
-            margin: 5px;
+        .card h2 { font-size: 32px; margin: 4px; }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px #0001;
         }
-
+        input, button {
+            padding: 10px;
+            margin: 5px 3px;
+            border-radius: 5px;
+        }
+        input { border: 1px solid #ccc; max-width: 100%; }
         button {
-            padding: 8px 12px;
-            margin: 5px;
+            border: 0;
+            background: #2457a7;
+            color: white;
             cursor: pointer;
         }
-
+        button:hover { background: #173c78; }
+        .refresh { background: #26734d; }
+        .table-wrap { overflow-x: auto; }
         table {
             width: 100%;
-            background: white;
             border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-
-        th {
-            background-color: #333;
-            color: white;
-        }
-
-        .form-section {
             background: white;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 8px #ccc;
         }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th { background: #243b55; color: white; }
+        #status { padding: 12px; margin: 12px 0; border-radius: 5px; }
+        .success { background: #e2f5e8; color: #176334; }
+        .error { background: #fde8e8; color: #a51f1f; }
+        .muted { color: #666; }
     </style>
 </head>
 <body>
 
-<h1>Retail Store Dashboard</h1>
+<h1>Retail Store Management System</h1>
+<p class="muted">Manage customers, products, inventory and orders.</p>
 
-<div class="card-container">
-    <div class="card">
-        <h2 id="customerCount">0</h2>
-        <p>Customers</p>
-    </div>
-    <div class="card">
-        <h2 id="productCount">0</h2>
-        <p>Products</p>
-    </div>
-    <div class="card">
-        <h2 id="orderCount">0</h2>
-        <p>Orders</p>
-    </div>
+<div id="status" role="status" hidden></div>
+
+<div class="cards">
+    <div class="card"><h2 id="customerCount">0</h2><p>Customers</p></div>
+    <div class="card"><h2 id="productCount">0</h2><p>Products</p></div>
+    <div class="card"><h2 id="orderCount">0</h2><p>Orders</p></div>
 </div>
 
-<!-- ADD CUSTOMER -->
-<div class="form-section">
+<div class="section">
     <h2>Add Customer</h2>
-    <input type="text" id="cName" placeholder="Name">
-    <input type="text" id="cEmail" placeholder="Email">
-    <input type="text" id="cPhone" placeholder="Phone">
-    <button onclick="addCustomer()">Add Customer</button>
+    <form id="customerForm">
+        <input id="cName" placeholder="Customer name" required>
+        <input id="cEmail" type="email" placeholder="Email" required>
+        <input id="cPhone" placeholder="Phone" required>
+        <button type="submit">Add Customer</button>
+    </form>
 </div>
 
-<!-- ADD PRODUCT -->
-<div class="form-section">
+<div class="section">
     <h2>Add Product</h2>
-    <input type="text" id="pName" placeholder="Product Name">
-    <input type="number" id="pPrice" placeholder="Price">
-    <input type="number" id="pQuantity" placeholder="Quantity">
-    <button onclick="addProduct()">Add Product</button>
+    <form id="productForm">
+        <input id="pName" placeholder="Product name" required>
+        <input id="pPrice" type="number" min="0.01" step="0.01"
+               placeholder="Price" required>
+        <input id="pQuantity" type="number" min="0" step="1"
+               placeholder="Stock quantity" required>
+        <button type="submit">Add Product</button>
+    </form>
 </div>
 
-<!-- PLACE ORDER -->
-<div class="form-section">
+<div class="section">
     <h2>Place Order</h2>
-    <input type="number" id="oCustomerId" placeholder="Customer ID">
-    <input type="number" id="oProductId" placeholder="Product ID">
-    <input type="number" id="oQuantity" placeholder="Quantity">
-    <button onclick="placeOrder()">Place Order</button>
+    <p class="muted">Use an existing customer ID and product ID from the tables below.</p>
+    <form id="orderForm">
+        <input id="oCustomerId" type="number" min="1"
+               placeholder="Customer ID" required>
+        <input id="oProductId" type="number" min="1"
+               placeholder="Product ID" required>
+        <input id="oQuantity" type="number" min="1" step="1"
+               placeholder="Quantity" required>
+        <button type="submit">Place Order</button>
+    </form>
 </div>
 
-<h2>Products</h2>
-<table id="productTable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Quantity</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<div class="section">
+    <h2>Customers</h2>
+    <div class="table-wrap">
+        <table id="customerTable">
+            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
 
-<h2>Orders</h2>
-<table id="orderTable">
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Date</th>
-            <th>Total Amount</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<div class="section">
+    <h2>Products</h2>
+    <div class="table-wrap">
+        <table id="productTable">
+            <thead><tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Orders</h2>
+    <div class="table-wrap">
+        <table id="orderTable">
+            <thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Total</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<button class="refresh" id="refreshButton" type="button">Refresh Dashboard</button>
 
 <script>
-    const baseUrl = "http://localhost:8080";
+    // Dashboard and API are served by the same Spring Boot application.
+    const baseUrl = window.location.origin;
 
-    function loadDashboard() {
-
-        // Customers
-        fetch(baseUrl + "/customers/all")
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("customerCount").innerText = data.length;
-            });
-
-        // Products
-        fetch(baseUrl + "/products/all")
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("productCount").innerText = data.length;
-
-                let table = document.querySelector("#productTable tbody");
-                table.innerHTML = "";
-
-                data.forEach(product => {
-                    table.innerHTML += `
-                        <tr>
-                            <td>${product.productId}</td>
-                            <td>${product.productName}</td>
-                            <td>${product.price}</td>
-                            <td>${product.quantity}</td>
-                        </tr>
-                    `;
-                });
-            });
-
-        // Orders
-        fetch(baseUrl + "/orders/all")
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("orderCount").innerText = data.length;
-
-                let table = document.querySelector("#orderTable tbody");
-                table.innerHTML = "";
-
-                data.forEach(order => {
-                    table.innerHTML += `
-                        <tr>
-                            <td>${order.orderId}</td>
-                            <td>${order.orderDate}</td>
-                            <td>${order.totalAmount}</td>
-                        </tr>
-                    `;
-                });
-            });
+    function showStatus(message, isError = false) {
+        const status = document.getElementById("status");
+        status.textContent = message;
+        status.className = isError ? "error" : "success";
+        status.hidden = false;
     }
 
-    function addCustomer() {
+    async function api(path, options = {}) {
+        const response = await fetch(baseUrl + path, {
+            ...options,
+            headers: {
+                ...(options.body ? { "Content-Type": "application/json" } : {}),
+                ...(options.headers || {})
+            }
+        });
+
+        const text = await response.text();
+
+        if (!response.ok) {
+            throw new Error(text || `HTTP ${response.status}`);
+        }
+
+        if (!text) return null;
+
+        try {
+            return JSON.parse(text);
+        } catch {
+            return text;
+        }
+    }
+
+    function addCell(row, value) {
+        const cell = row.insertCell();
+        cell.textContent = value == null ? "" : String(value);
+    }
+
+    function fillTable(selector, records, columns) {
+        const body = document.querySelector(selector);
+        body.replaceChildren();
+
+        records.forEach(record => {
+            const row = body.insertRow();
+            columns.forEach(column => addCell(row, column(record)));
+        });
+    }
+
+    async function loadDashboard() {
+        try {
+            const [customers, products, orders] = await Promise.all([
+                api("/customers/all"),
+                api("/products/all"),
+                api("/orders/all")
+            ]);
+
+            document.getElementById("customerCount").textContent = customers.length;
+            document.getElementById("productCount").textContent = products.length;
+            document.getElementById("orderCount").textContent = orders.length;
+
+            fillTable("#customerTable tbody", customers, [
+                c => c.customerId, c => c.name, c => c.email, c => c.phone
+            ]);
+
+            fillTable("#productTable tbody", products, [
+                p => p.productId, p => p.productName,
+                p => p.price, p => p.quantity
+            ]);
+
+            fillTable("#orderTable tbody", orders, [
+                o => o.orderId,
+                o => o.orderDate,
+                o => o.customer ? `${o.customer.name} (ID ${o.customer.customerId})` : "",
+                o => o.totalAmount == null ? "" : Number(o.totalAmount).toFixed(2)
+            ]);
+        } catch (error) {
+            showStatus("Could not load dashboard: " + error.message, true);
+            console.error(error);
+        }
+    }
+
+    document.getElementById("customerForm").addEventListener("submit", async event => {
+        event.preventDefault();
+
         const customer = {
-            name: document.getElementById("cName").value,
-            email: document.getElementById("cEmail").value,
-            phone: document.getElementById("cPhone").value
+            name: document.getElementById("cName").value.trim(),
+            email: document.getElementById("cEmail").value.trim(),
+            phone: document.getElementById("cPhone").value.trim()
         };
 
-        fetch(baseUrl + "/customers/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(customer)
-        })
-        .then(res => res.json())
-        .then(() => {
-            alert("Customer Added Successfully!");
-            loadDashboard();
-        });
-    }
+        if (!customer.name || !customer.email || !customer.phone) {
+            showStatus("Please fill in all customer fields.", true);
+            return;
+        }
 
-    function addProduct() {
-        const product = {
-            productName: document.getElementById("pName").value,
-            price: parseFloat(document.getElementById("pPrice").value),
-            quantity: parseInt(document.getElementById("pQuantity").value)
-        };
+        try {
+            await api("/customers/add", {
+                method: "POST",
+                body: JSON.stringify(customer)
+            });
+            event.target.reset();
+            await loadDashboard();
+            showStatus("Customer added successfully.");
+        } catch (error) {
+            showStatus("Could not add customer: " + error.message, true);
+        }
+    });
 
-        fetch(baseUrl + "/products/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(product)
-        })
-        .then(res => res.json())
-        .then(() => {
-            alert("Product Added Successfully!");
-            loadDashboard();
-        });
-    }
+    document.getElementById("productForm").addEventListener("submit", async event => {
+        event.preventDefault();
 
-    function placeOrder() {
-        const order = {
-            customer: {
-                customerId: parseInt(document.getElementById("oCustomerId").value)
-            },
-            orderItems: [
-                {
-                    product: {
-                        productId: parseInt(document.getElementById("oProductId").value)
-                    },
-                    quantity: parseInt(document.getElementById("oQuantity").value)
-                }
-            ]
-        };
+        const priceText = document.getElementById("pPrice").value;
+        const quantityText = document.getElementById("pQuantity").value;
+        const price = Number(priceText);
+        const quantity = Number(quantityText);
+        const productName = document.getElementById("pName").value.trim();
 
-        fetch(baseUrl + "/orders/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(order)
-        })
-        .then(res => res.json())
-        .then(() => {
-            alert("Order Placed Successfully!");
-            loadDashboard();
-        });
-    }
+        if (!productName || priceText === "" || quantityText === "" ||
+            !Number.isFinite(price) || price <= 0 ||
+            !Number.isInteger(quantity) || quantity < 0) {
+            showStatus("Enter a product name, positive price and valid stock quantity.", true);
+            return;
+        }
 
-    // Load data when page opens
+        try {
+            await api("/products/add", {
+                method: "POST",
+                body: JSON.stringify({ productName, price, quantity })
+            });
+            event.target.reset();
+            await loadDashboard();
+            showStatus("Product added successfully.");
+        } catch (error) {
+            showStatus("Could not add product: " + error.message, true);
+        }
+    });
+
+    document.getElementById("orderForm").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const customerId = Number(document.getElementById("oCustomerId").value);
+        const productId = Number(document.getElementById("oProductId").value);
+        const quantity = Number(document.getElementById("oQuantity").value);
+
+        if (!Number.isInteger(customerId) || customerId <= 0 ||
+            !Number.isInteger(productId) || productId <= 0 ||
+            !Number.isInteger(quantity) || quantity <= 0) {
+            showStatus("Enter valid customer ID, product ID and positive quantity.", true);
+            return;
+        }
+
+        try {
+            await api("/orders/add", {
+                method: "POST",
+                body: JSON.stringify({
+                    customer: { customerId },
+                    orderItems: [{ product: { productId }, quantity }]
+                })
+            });
+
+            event.target.reset();
+            await loadDashboard();
+            showStatus("Order placed successfully.");
+        } catch (error) {
+            showStatus("Could not place order: " + error.message, true);
+        }
+    });
+
+    document.getElementById("refreshButton")
+        .addEventListener("click", loadDashboard);
+
     loadDashboard();
 </script>
 
